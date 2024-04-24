@@ -1,11 +1,20 @@
 const express = require('express');
-const fs = require('fs');
-const port = 4000;
+const da = require("./data-access");
+const path = require('path'); 
 
-var app = express();
+const app = express();
+const port = process.env.PORT || 4000;  // use env var or default to 4000
 
-app.use(express.static('public'));             // URL '/' (root) maps to 'public' directory
-app.use('/static', express.static('public'));  // URL '/static' also maps to 'public' directory
+// Set the static directory to serve files from
+const staticDir = path.join(__dirname, 'public');
+app.use(express.static(staticDir));
 
+app.get("/customers", async (req, res) => {
+    const cust = await da.getCustomers();
+    res.send(cust);    
+});
 
-app.listen(port);
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+  console.log("staticDir: " + staticDir);
+});
