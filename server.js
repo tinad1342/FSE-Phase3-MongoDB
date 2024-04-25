@@ -94,6 +94,18 @@ app.put("/customers/:id", async (req, res) => {
     }   
 });
 
+app.delete("/customers/:id", async (req, res) => {
+    const id = req.params.id;
+    const [message, err] = await da.deleteCustomerById(id);
+    if (message) {
+        res.send(message); 
+    } else {
+        res.status(404);
+        res.send(err);
+    }
+       
+});
+
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
   console.log("staticDir: " + staticDir);
