@@ -2,6 +2,7 @@ const express = require('express');
 const da = require("./data-access");
 const path = require('path'); 
 const bodyParser = require('body-parser');
+const { type } = require('os');
 
 const app = express();
 const port = process.env.PORT || 4000;  // use env var or default to 4000
@@ -35,10 +36,13 @@ app.get("/reset", async (req, res) => {
 
 app.post("/customers", async (req, res) => {
     const newCust = req.body;
-    
-    if (newCust === null || newCust !={}) {
+
+    if (Object.keys(newCust).length === 0) {
         res.status(400); 
         res.send("missing request body");
+    } else if (newCust.name === undefined || newCust.name.trim() == "") {
+        res.status(400); 
+        res.send("customer name required");
     } else {
         const [status, id, err] = await da.addCustomer(newCust);
         if (status === "success") {
@@ -66,6 +70,28 @@ app.get("/customers/:id", async (req, res) => {
         res.send(err);
     }
        
+});
+
+app.put("/customers/:id", async (req, res) => {
+    const updatedCust = req.body;
+    const id = req.params._id;
+
+    if (Object.keys(updatedCust).length === 0) {
+        res.status(400); 
+        res.send("missing request body");
+    } else if (updatedCust.name === undefined || updatedCust.name.trim() == "") {
+        res.status(400); 
+        res.send("customer name required");
+    } else {
+        delete id;
+        const [message, err] = await da.updateCustomer(updatedCust);
+        if (message) {
+            res.send(message); 
+        } else {
+            res.status(400);
+            res.send(err);
+        }
+    }   
 });
 
 app.listen(port, () => {

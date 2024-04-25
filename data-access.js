@@ -33,7 +33,7 @@ async function resetCustomers() {
         await collection.deleteMany({});
         await collection.insertMany(initialCustomers);
         const dbCount = await collection.count();
-        const message = "There are now " + dbCount + "customer records!"
+        const message = "There are now " + dbCount + " customer records!"
         return [message, null];
     } catch (err) {
         console.log(err.message);
@@ -66,5 +66,18 @@ async function getCustomerById(id) {
     }
 }
 
+async function updateCustomer(updatedCustomer) {
+    try {
+        const filter = {"id": updatedCustomer.id};
+        const set = {$set: updatedCustomer};
+        const customer = await collection.updateOne(filter, set);
+        return ["Customer updated successully!", null];
+    } 
+    catch (err) {
+        console.log(err.message);
+        return [null, err.message];
+    }
+}
+
 dbStartup();
-module.exports = { getCustomers, resetCustomers, addCustomer, getCustomerById };
+module.exports = { getCustomers, resetCustomers, addCustomer, getCustomerById, updateCustomer };
