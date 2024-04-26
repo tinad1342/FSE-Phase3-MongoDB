@@ -46,16 +46,25 @@ app.post("/customers", auth, async (req, res) => {
         res.status(400); 
         res.send("customer name required");
     } else {
-        const [status, id, err] = await da.addCustomer(newCust);
-        if (status === "success") {
-            res.status(201);
-            let response = { ...newCust };
-            response["_id"] = id;
-            res.send(response);
+        // check if customer id already exists before adding 
+        const existingCust = await da.getCustomerById(newCust.id);
+        if (existingCust[0]) {
+            res.status(400);
+            res.send("Customer already exists.");
         } else {
+            const [status, id, err] = await da.addCustomer(newCust);
+            if (status === "success") {
+                res.status(201);
+                let response = { ...newCust };
+                response["_id"] = id;
+                res.send(response);
+            } else {
             res.status(400);
             res.send(err);
+            }
         }
+
+        
         
         }
     }
