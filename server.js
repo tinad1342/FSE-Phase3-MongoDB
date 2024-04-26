@@ -3,6 +3,8 @@ const da = require("./data-access");
 const path = require('path'); 
 const bodyParser = require('body-parser');
 const { type } = require('os');
+// require('dotenv').config();
+const { auth } = require("./auth");
 
 const app = express();
 const port = process.env.PORT || 4000;  // use env var or default to 4000
@@ -12,7 +14,7 @@ const staticDir = path.join(__dirname, 'public');
 app.use(bodyParser.json());
 app.use(express.static(staticDir));
 
-app.get("/customers", async (req, res) => {
+app.get("/customers", auth, async (req, res) => {
     const [cust, err] = await da.getCustomers();
     if (cust) {
         res.send(cust); 
@@ -23,7 +25,7 @@ app.get("/customers", async (req, res) => {
        
 });
 
-app.get("/reset", async (req, res) => {
+app.get("/reset", auth, async (req, res) => {
     const [cust, err] = await da.resetCustomers();
     if (cust) {
         res.send(cust); 
@@ -34,7 +36,7 @@ app.get("/reset", async (req, res) => {
        
 });
 
-app.post("/customers", async (req, res) => {
+app.post("/customers", auth, async (req, res) => {
     const newCust = req.body;
 
     if (Object.keys(newCust).length === 0) {
@@ -60,7 +62,7 @@ app.post("/customers", async (req, res) => {
        
 );
 
-app.get("/customers/:id", async (req, res) => {
+app.get("/customers/:id", auth, async (req, res) => {
     const id = req.params.id;
     const [cust, err] = await da.getCustomerById(id);
     if (cust) {
@@ -74,8 +76,7 @@ app.get("/customers/:id", async (req, res) => {
 
 app.put("/customers/:id", async (req, res) => {
     const updatedCust = req.body;
-    const id = req.params._id;
-
+    const id = updatedCust._id;
     if (Object.keys(updatedCust).length === 0) {
         res.status(400); 
         res.send("missing request body");
@@ -94,7 +95,7 @@ app.put("/customers/:id", async (req, res) => {
     }   
 });
 
-app.delete("/customers/:id", async (req, res) => {
+app.delete("/customers/:id", auth, async (req, res) => {
     const id = req.params.id;
     const [message, err] = await da.deleteCustomerById(id);
     if (message) {
