@@ -4,7 +4,8 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const { type } = require('os');
 // require('dotenv').config();
-const { auth } = require("./auth");
+const auth  = require("./auth").auth;
+const getNewApiKey = require("./auth").getNewApiKey;
 
 const app = express();
 const port = process.env.PORT || 4000;  // use env var or default to 4000
@@ -141,6 +142,17 @@ app.delete("/customers/:id", auth, async (req, res) => {
         res.send(err);
     }
        
+});
+
+app.get("/apikey", async (req, res) => {
+    const email = req.query.email;
+    if (!email) {
+        res.send("Email query required");
+    } else {
+        const apiKey = await getNewApiKey(email);
+        res.send(apiKey);
+    }
+    
 });
 
 app.listen(port, () => {
