@@ -24,9 +24,9 @@ async function getCustomers() {
 
 async function resetCustomers() {
     const initialCustomers = [
-        { "_id": "66280ff1e0d3d5f5549f990a", "id": "0", "name": "Mary Jackson", "email": "maryj@abc.com" },
-        { "_id": "6628103ce0d3d5f5549f990b", "id": "1", "name": "Karen Addams", "email": "karena@abc.com" },
-        { "_id": "6628105be0d3d5f5549f990c", "id": "2", "name": "Scott Ramsey", "email": "scottr@abc.com" }
+        { "_id": "66280ff1e0d3d5f5549f990a", "id": 0, "name": "Mary Jackson", "email": "maryj@abc.com", "password": "maryj" },
+        { "_id": "6628103ce0d3d5f5549f990b", "id": 1, "name": "Karen Addams", "email": "karena@abc.com", "password": "karena" },
+        { "_id": "6628105be0d3d5f5549f990c", "id": 2, "name": "Scott Ramsey", "email": "scottr@abc.com", "password": "scottr" }
     ]; 
 
     try {
@@ -93,19 +93,19 @@ async function deleteCustomerById(id) {
     }
 }
 
-// async function findCustomers(filterObject) {
-//     try {
-//         const customers = await collection.find(filterObject).toArray();
-//         if (!customers || customers.length === 0) {
-//             return [ null, "no customers found."];
-//         }
-//         return [customers, null];
-//     } 
-//     catch (err) {
-//         console.log(err.message);
-//         return [null, err.message];
-//     }
-// }
+async function findCustomers(filterObject) {
+    try {
+        const customers = await collection.find(filterObject).toArray();
+        if (!customers || customers.length === 0) {
+            return [ null, "no customers found."];
+        }
+        return [customers, null];
+    } 
+    catch (err) {
+        console.log(err.message);
+        return [null, err.message];
+    }
+}
 
 dbStartup();
 module.exports = { 
@@ -114,6 +114,6 @@ module.exports = {
     addCustomer, 
     getCustomerById, 
     updateCustomer,
-    deleteCustomerById
-    // ,findCustomers
+    deleteCustomerById,
+    findCustomers
  };

@@ -71,8 +71,35 @@ app.post("/customers", auth, async (req, res) => {
        
 );
 
+app.get("/customers/find", async (req, res) => {
+    let id = +req.query.id;
+    let email = req.query.email;
+    let password = req.query.password;
+    let query = null;
+    if (id > -1) {
+        query = { "id": id };
+    } else if (email) {
+        query = { "email": email };
+    } else if (password) {
+        query = { "password": password }
+    }
+    if (query) {
+        const [customers, err] = await da.findCustomers(query);
+        if (customers) {
+            res.send(customers);
+        } else {
+            res.status(404);
+            res.send(err);
+        }
+    } else {
+        res.status(400);
+        res.send("query string is required");
+    }
+       
+});
+
 app.get("/customers/:id", auth, async (req, res) => {
-    const id = req.params.id;
+    const id = +req.params.id;
     const [cust, err] = await da.getCustomerById(id);
     if (cust) {
         res.send(cust); 
@@ -105,7 +132,7 @@ app.put("/customers/:id", auth, async (req, res) => {
 });
 
 app.delete("/customers/:id", auth, async (req, res) => {
-    const id = req.params.id;
+    const id = +req.params.id;
     const [message, err] = await da.deleteCustomerById(id);
     if (message) {
         res.send(message); 
@@ -115,33 +142,6 @@ app.delete("/customers/:id", auth, async (req, res) => {
     }
        
 });
-
-// app.get("/customers/find", async (req, res) => {
-//     let id = +req.query.id;
-//     let email = req.query.email;
-//     let password = req.query.password;
-//     let query = null;
-//     if (id > -1) {
-//         query = { "id": id };
-//     } else if (email) {
-//         query = { "email": email };
-//     } else if (password) {
-//         query = { "password": password }
-//     }
-//     if (query) {
-//         const [customers, err] = await da.findCustomers(query);
-//         if (customers) {
-//             res.send(customers);
-//         } else {
-//             res.status(404);
-//             res.send(err);
-//         }
-//     } else {
-//         res.status(400);
-//         res.send("query string is required");
-//     }
-       
-// });
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
