@@ -93,6 +93,20 @@ async function deleteCustomerById(id) {
     }
 }
 
+// async function findCustomers(filterObject) {
+//     try {
+//         const customers = await collection.find(filterObject).toArray();
+//         if (!customers || customers.length === 0) {
+//             return [ null, "no customers found."];
+//         }
+//         return [customers, null];
+//     } 
+//     catch (err) {
+//         console.log(err.message);
+//         return [null, err.message];
+//     }
+// }
+
 dbStartup();
 module.exports = { 
     getCustomers, 
@@ -101,4 +115,5 @@ module.exports = {
     getCustomerById, 
     updateCustomer,
     deleteCustomerById
+    // ,findCustomers
  };
